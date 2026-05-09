@@ -77,7 +77,10 @@ def search_magazine(app_id: str, access_key: str, mag: dict) -> list[dict]:
     else:
         params["title"] = mag["title"]
 
-    headers = {"Referer": "https://github.com"}
+    headers = {
+        "Referer": "https://example.com/",
+        "Origin": "https://example.com",
+    }
 
     for attempt in range(RETRY_COUNT):
         try:
