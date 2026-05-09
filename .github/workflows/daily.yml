@@ -1,0 +1,45 @@
+name: Update Magazine Calendar
+
+on:
+  schedule:
+    # UTC 23:00 = JST 翌 08:00 に毎日実行
+    - cron: "0 23 * * *"
+  workflow_dispatch: # 手動実行ボタン
+
+permissions:
+  contents: write # calendar.ics をコミット・プッシュするために必要
+
+jobs:
+  update-calendar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate calendar.ics
+        env:
+          RAKUTEN_APP_ID: ${{ secrets.RAKUTEN_APP_ID }}
+        run: python notifier.py
+
+      - name: Commit and push calendar.ics if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add calendar.ics
+          if git diff --cached --quiet; then
+            echo "calendar.ics に変更なし — コミットをスキップします"
+          else
+            git commit -m "chore: update calendar.ics [skip ci]"
+            git push
+          fi
