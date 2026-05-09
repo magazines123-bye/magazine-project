@@ -30,6 +30,7 @@ jobs:
       - name: Generate calendar.ics
         env:
           RAKUTEN_APP_ID: ${{ secrets.RAKUTEN_APP_ID }}
+          RAKUTEN_ACCESS_KEY: ${{ secrets.RAKUTEN_ACCESS_KEY }}
         run: python notifier.py
 
       - name: Commit and push calendar.ics if changed

@@ -26,7 +26,7 @@ import yaml
 # ---------------------------------------------------------------------------
 
 RAKUTEN_API_URL = (
-    "https://app.rakuten.co.jp/services/api/BooksMagazine/Search/20170404"
+    "https://openapi.rakuten.co.jp/services/api/BooksMagazine/Search/20170404"
 )
 CALENDAR_FILE = Path("calendar.ics")
 PAST_DAYS = 14
@@ -61,10 +61,11 @@ def load_magazines(path: str = "magazines.yaml") -> list[dict]:
 # ---------------------------------------------------------------------------
 
 
-def search_magazine(app_id: str, mag: dict) -> list[dict]:
+def search_magazine(app_id: str, access_key: str, mag: dict) -> list[dict]:
     """Query Rakuten Books Magazine API; returns raw item list (formatVersion=2)."""
     params: dict[str, str] = {
         "applicationId": app_id,
+        "accessKey": access_key,
         "formatVersion": "2",
         "sort": "-releaseDate",  # newest/upcoming first
         "hits": "30",
@@ -76,9 +77,11 @@ def search_magazine(app_id: str, mag: dict) -> list[dict]:
     else:
         params["title"] = mag["title"]
 
+    headers = {"Referer": "https://github.com"}
+
     for attempt in range(RETRY_COUNT):
         try:
-            resp = requests.get(RAKUTEN_API_URL, params=params, timeout=10)
+            resp = requests.get(RAKUTEN_API_URL, params=params, headers=headers, timeout=10)
             resp.raise_for_status()
             data = resp.json()
             if "error" in data:
@@ -269,6 +272,11 @@ def main() -> None:
         log.error("環境変数 RAKUTEN_APP_ID が設定されていません。")
         raise SystemExit(1)
 
+    access_key = os.environ.get("RAKUTEN_ACCESS_KEY")
+    if not access_key:
+        log.error("環境変数 RAKUTEN_ACCESS_KEY が設定されていません。")
+        raise SystemExit(1)
+
     today = date.today()
     start_date = today - timedelta(days=PAST_DAYS)
     end_date = today + timedelta(days=FUTURE_DAYS)
@@ -284,7 +292,7 @@ def main() -> None:
         title = mag["title"]
         log.info("検索中: %s", title)
 
-        items = search_magazine(app_id, mag)
+        items = search_magazine(app_id, access_key, mag)
         if not items:
             log.warning("結果なし: %s — スキップします", title)
             continue
