@@ -1,12 +1,19 @@
 magazines:
-  # 週刊少年ジャンプ (集英社 / 毎週月曜発売)
-  - title: "週刊少年ジャンプ"
-
-  # 日経トレンディ (日経BP / 毎月1日発売)
-  - title: "日経トレンディ"
-
-  # MonoMax (宝島社 / 毎月9日発売)
-  - title: "MonoMax"
+  - title: "GISELe"
+  - title: "InRed"
+  - title: "天然生活"
+  - title: "大人のおしゃれ手帖"
+  - title: "ミセスのスタイルブック"
+  - title: "VERY"
+  - title: "オレンジページ"
+  - title: "LEE"
+  - title: "FUDGE"
+  - title: "STORY"
+  - title: "リンネル"
+  - title: "GLOW"
+  - title: "Go Out"
+  - title: "Goods Press"
+  
 
 # ---------------------------------------------------------------------------
 # 雑誌の追加方法
