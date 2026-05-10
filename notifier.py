@@ -69,6 +69,7 @@ def search_magazine(app_id: str, access_key: str, mag: dict) -> list[dict]:
         "formatVersion": "2",
         "sort": "-releaseDate",  # newest/upcoming first
         "hits": "30",
+        "availability": "0",
     }
     if mag.get("jan"):
         params["jan"] = str(mag["jan"])
